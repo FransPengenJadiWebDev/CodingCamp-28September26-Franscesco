@@ -1,0 +1,379 @@
+/* ============================================================
+   Expense & Budget Visualizer — css/style.css
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. CSS Custom Properties (Design Tokens)
+   ------------------------------------------------------------ */
+
+/* Light mode defaults */
+:root {
+  --color-bg:               #ffffff;
+  --color-surface:          #f5f5f5;
+  --color-text:             #1a1a1a;
+  --color-text-muted:       #555555;
+  --color-accent:           #3b82f6;
+  --color-border:           #e0e0e0;
+  --color-highlight:        #fee2e2;   /* overspend highlight background � light red */
+  --color-highlight-border: #dc2626;
+}
+
+/* Dark mode overrides — toggled via class="dark" on <html> */
+html.dark {
+  --color-bg:               #121212;
+  --color-surface:          #1e1e1e;
+  --color-text:             #f0f0f0;
+  --color-text-muted:       #aaaaaa;
+  --color-accent:           #60a5fa;
+  --color-border:           #333333;
+  --color-highlight:        #3f1515;   /* overspend highlight background � dark red */
+  --color-highlight-border: #f87171;
+}
+
+/* ------------------------------------------------------------
+   2. Reset & Base Styles
+   ------------------------------------------------------------ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 100%; /* 16px base; min effective size kept at 14px via body */
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.875rem; /* 14px — minimum per NFR-2 */
+  line-height: 1.5;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-width: 320px;
+}
+
+img,
+canvas {
+  max-width: 100%;
+  display: block;
+}
+
+ul {
+  list-style: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* ------------------------------------------------------------
+   3. Layout — Mobile-First Base (< 600px, single-column)
+   ------------------------------------------------------------ */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ---- Header ---- */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+header h1 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ---- Main content area ---- */
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ---- Sections — shared surface card style ---- */
+section {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+section h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+
+/* ---- Input Form — single-column base ---- */
+#transaction-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+#transaction-form input,
+#transaction-form select,
+#transaction-form button {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+#transaction-form input::placeholder {
+  color: var(--color-text-muted);
+}
+
+#transaction-form button[type="submit"] {
+  background-color: var(--color-accent);
+  color: #ffffff;
+  border-color: var(--color-accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#transaction-form button[type="submit"]:hover,
+#transaction-form button[type="submit"]:focus-visible {
+  opacity: 0.88;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---- Validation error messages ---- */
+#form-errors,
+#limit-error {
+  font-size: 0.8125rem;
+  color: #dc2626;
+  min-height: 1.25rem;
+}
+
+html.dark #form-errors,
+html.dark #limit-error {
+  color: #f87171;
+}
+
+/* ---- Controls section (sort + limit) — single-column base ---- */
+#controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+#controls-section label {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+#controls-section select,
+#controls-section input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* ---- Balance display ---- */
+#balance-display {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+/* ---- Transaction list ---- */
+#transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;   /* scrollable area per Req 2.2 */
+  overflow-y: auto;
+  overflow-x: hidden;  /* no horizontal scroll */
+}
+
+#transaction-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  flex-wrap: wrap;
+}
+
+/* Over-limit highlight � clearly visible in both themes */
+li.over-limit {
+  background-color: var(--color-highlight);
+  border-left: 4px solid var(--color-highlight-border);
+  box-shadow: inset 3px 0 0 var(--color-highlight-border);
+}
+
+/* ---- Theme toggle button ---- */
+#theme-toggle {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+#theme-toggle:hover,
+#theme-toggle:focus-visible {
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---- Chart section ---- */
+#chart-section canvas {
+  margin: 0 auto;
+  max-width: 100%;   /* prevent canvas from overflowing its container */
+  width: 100% !important; /* override Chart.js inline width on small viewports */
+  height: auto !important;
+}
+
+#empty-state,
+#chart-empty {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+/* ---- Delete buttons in list items ---- */
+.btn-delete {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+.btn-delete:hover,
+.btn-delete:focus-visible {
+  border-color: #dc2626;
+  color: #dc2626;
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+html.dark .btn-delete:hover,
+html.dark .btn-delete:focus-visible {
+  border-color: #f87171;
+  color: #f87171;
+  outline-color: #f87171;
+}
+
+/* ------------------------------------------------------------
+   4. Responsive — ≥ 600px: two-column form fields
+   ------------------------------------------------------------ */
+
+@media (min-width: 600px) {
+  header h1 {
+    font-size: 1.25rem;
+  }
+
+  /* Two-column form grid */
+  #transaction-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 0.75rem;
+  }
+
+  /* Item name spans full width on its own row */
+  #transaction-form #item-name {
+    grid-column: 1 / -1;
+  }
+
+  /* Submit button spans full width on last row */
+  #transaction-form button[type="submit"] {
+    grid-column: 1 / -1;
+  }
+
+  /* Controls: side-by-side pairs */
+  #controls-section {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+  }
+}
+
+/* ------------------------------------------------------------
+   5. Responsive — ≥ 900px: list and chart side-by-side
+   ------------------------------------------------------------ */
+
+@media (min-width: 900px) {
+  main {
+    display: grid;
+    /* Top row: balance | form (form takes more space) */
+    /* Bottom row: list | chart (equal halves) */
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "balance  form"
+      "controls controls"
+      "list     chart";
+    gap: 1.25rem;
+    padding: 1.5rem;
+  }
+
+  #balance-section  { grid-area: balance; }
+  #form-section     { grid-area: form; }
+  #controls-section { grid-area: controls; }
+  #list-section     { grid-area: list; }
+  #chart-section    { grid-area: chart; }
+}
+
+#controls-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+#controls-section select,
+#controls-section input {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 599px) {
+  #controls-section {
+    grid-template-columns: 1fr;
+  }
+}
